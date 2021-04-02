@@ -10,5 +10,6 @@ namespace TrallyRally.Data
         }
 
         public DbSet<Question> Questions { get; set; }
+        public DbSet<Player> Players { get; set; }
     }
 }

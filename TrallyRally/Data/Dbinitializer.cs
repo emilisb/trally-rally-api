@@ -10,10 +10,15 @@ namespace TrallyRally.Data
         {
             context.Database.EnsureCreated();
 
-            // Look for any questions.
+            SeedQuestions(context);
+            SeedPlayers(context);
+        }
+
+        public static void SeedQuestions(DatabaseContext context)
+        {
             if (context.Questions.Any())
             {
-                return;   // DB has been seeded
+                return;
             }
 
             var questions = new Question[]
@@ -25,6 +30,27 @@ namespace TrallyRally.Data
             {
                 context.Questions.Add(q);
             }
+
+            context.SaveChanges();
+        }
+
+        public static void SeedPlayers(DatabaseContext context)
+        {
+            if (context.Players.Any())
+            {
+                return;
+            }
+
+            var players = new Player[]
+            {
+                new Player { Name = "Emilis & Co.", Phone = "+37063899324", StartPosition = 21, StartTime = new DateTime(2020, 5, 9, 12, 53, 5) },
+            };
+
+            foreach (Player item in players)
+            {
+                context.Players.Add(item);
+            }
+
             context.SaveChanges();
         }
     }
