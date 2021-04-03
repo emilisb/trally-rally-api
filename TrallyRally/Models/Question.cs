@@ -19,6 +19,7 @@ namespace TrallyRally.Models
         public int MaxDistance { get; set; }
         public decimal Latitude { get; set; }
         public decimal Longitude { get; set; }
+        public int GameID { get; set; }
 
         public ICollection<QuestionSubmission> QuestionSubmissions { get; set; }
     }

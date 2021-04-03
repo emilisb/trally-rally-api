@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using TrallyRally.Models;
 using TrallyRally.Entities;
 
@@ -8,8 +10,8 @@ namespace TrallyRally.Services
     public interface IUserService
     {
         IUser AttemptLogin(string username, string password);
-        IEnumerable<IUser> GetAll();
         IUser GetById(int id);
+        IUser GetUserFromClaims(ClaimsPrincipal claimsPrincipal);
     }
 
     public class PlayerAuthService : IUserService
@@ -27,14 +29,15 @@ namespace TrallyRally.Services
             return user;
         }
 
-        public IEnumerable<IUser> GetAll()
-        {
-            return _users;
-        }
-
         public IUser GetById(int id)
         {
             return _users.FirstOrDefault(x => x.ID == id);
+        }
+
+        public IUser GetUserFromClaims(ClaimsPrincipal claimsPrincipal)
+        {
+            var userIdClaim = claimsPrincipal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
+            return GetById(Int32.Parse(userIdClaim.Value));
         }
     }
 }

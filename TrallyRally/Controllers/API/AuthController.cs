@@ -74,9 +74,7 @@ namespace TrallyRally.Controllers.API
         [HttpGet("user")]
         public IActionResult GetUser()
         {
-            var userIdClaim = HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier);
-            var user = _userService.GetById(Int32.Parse(userIdClaim.Value));
-            return Ok(user);
+            return Ok(_userService.GetUserFromClaims(User));
         }
     }
 }
