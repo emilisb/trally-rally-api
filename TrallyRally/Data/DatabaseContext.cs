@@ -13,15 +13,5 @@ namespace TrallyRally.Data
         public DbSet<Player> Players { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<QuestionSubmission> QuestionSubmissions { get; set; }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder
-                .Entity<Player>()
-                .HasMany(p => p.Games)
-                .WithMany(p => p.Players)
-                .UsingEntity(j => j.ToTable("GamePlayer"));
-        }
-
     }
 }
