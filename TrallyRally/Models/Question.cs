@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using TrallyRally.Dtos;
 
 namespace TrallyRally.Models
 {
@@ -21,6 +22,11 @@ namespace TrallyRally.Models
         public decimal Longitude { get; set; }
         public int GameID { get; set; }
 
-        public ICollection<QuestionSubmission> QuestionSubmissions { get; set; }
+        public IList<QuestionSubmission> QuestionSubmissions { get; set; }
+
+        public QuestionDto ConvertToDto()
+        {
+            return new QuestionDto(this);
+        }
     }
 }

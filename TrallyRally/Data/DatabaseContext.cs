@@ -10,8 +10,9 @@ namespace TrallyRally.Data
         }
 
         public DbSet<Game> Games { get; set; }
-        public DbSet<Question> Questions { get; set; }
         public DbSet<Player> Players { get; set; }
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<QuestionSubmission> QuestionSubmissions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

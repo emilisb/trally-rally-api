@@ -1,5 +1,6 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace TrallyRally.Models
 {
@@ -9,11 +10,14 @@ namespace TrallyRally.Models
         public int QuestionID { get; set; }
         public int PlayerID { get; set; }
         public string Answer { get; set; }
-        [DataType(DataType.Time)]
-        [DisplayFormat(DataFormatString = "{0:hh:mm:ss}")]
-        public DateTime SubmissionTime { get; set; }
 
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public DateTime CreatedDate { get; set; }
 
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime ModifiedDate { get; set; }
+
+        [JsonIgnore]
         public Player Player { get; set; }
     }
 }

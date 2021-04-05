@@ -24,5 +24,7 @@
     <Folder Include="Services\" />
     <Folder Include="Helpers\" />
     <Folder Include="Entities\" />
+    <Folder Include="Dtos\" />
+    <Folder Include="DataStructures\" />
   </ItemGroup>
 </Project>

@@ -13,7 +13,7 @@ namespace TrallyRally.Models
         public DateTime CreatedDate { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime LastUpdated { get; set; }
+        public DateTime ModifiedDate { get; set; }
 
         public ICollection<Question> Questions { get; set; }
         public ICollection<Player> Players { get; set; }

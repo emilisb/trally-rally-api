@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using TrallyRally.Data;
 using TrallyRally.Models;
 using TrallyRally.Services;
+using TrallyRally.Dtos;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -27,18 +28,25 @@ namespace TrallyRally.Controllers.API
 
         // GET: api/values
         [HttpGet]
-        public async Task<ActionResult<List<Question>>> Get()
+        public async Task<ActionResult<List<QuestionDto>>> Get()
         {
             var user = _userService.GetUserFromClaims(User);
-            var player = await _context.Players.Include(x => x.Games).ThenInclude(x => x.Questions).FirstOrDefaultAsync();
+            var player = await _context.Players
+                .Include(player => player.Games)
+                .ThenInclude(game => game.Questions)
+                .ThenInclude(question => question.QuestionSubmissions.Where(submission => submission.PlayerID == user.ID))
+                .FirstOrDefaultAsync();
+
             var game = player.Games.OrderByDescending(game => game.CreatedDate).FirstOrDefault();
 
             if (game == null)
             {
-                return new List<Question>();
+                return new List<QuestionDto>();
             }
 
-            return game.Questions.ToList();
+            var questions = game.Questions.ToList();
+
+            return questions.ConvertAll(q => q.ConvertToDto());
         }
 
         // GET api/values/5
