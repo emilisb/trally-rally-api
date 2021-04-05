@@ -1,15 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.IO;
+using System.Drawing;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authorization;
 using TrallyRally.Data;
 using TrallyRally.Models;
 using TrallyRally.Services;
 using TrallyRally.Dtos;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace TrallyRally.Controllers.API
 {
@@ -24,14 +26,15 @@ namespace TrallyRally.Controllers.API
     {
         private readonly DatabaseContext _context;
         private readonly IUserService _userService;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public QuestionsController(DatabaseContext context, IUserService userService)
+        public QuestionsController(DatabaseContext context, IUserService userService, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _userService = userService;
+            _webHostEnvironment = webHostEnvironment;
         }
 
-        // GET: api/values
         [HttpGet]
         public async Task<ActionResult<List<QuestionDto>>> Get()
         {
@@ -55,47 +58,60 @@ namespace TrallyRally.Controllers.API
         }
 
         [HttpPut("{id}/submit")]
-        public void Submit(int id, [FromBody] SubmitAnswerRequest request)
+        public IActionResult Submit(int id, [FromBody] SubmitAnswerRequest request)
         {
             var user = _userService.GetUserFromClaims(User);
+            var question = _context.Questions.Find(id);
+            if (question == null)
+            {
+                return NotFound();
+            }
+
+            var newAnswer = request.Answer;
+
+            if (question.Type == QuestionType.PHOTO)
+            {
+                if (string.IsNullOrEmpty(request.Answer))
+                {
+                    return BadRequest();
+                }
+
+                newAnswer = uploadPhoto(request.Answer);
+            }
+
             var submission = _context.QuestionSubmissions.FirstOrDefault(x => x.QuestionID == id && x.PlayerID == user.ID);
 
             if (submission == null)
             {
-                submission = new QuestionSubmission { PlayerID = user.ID, QuestionID = id, Answer = request.Answer };
+                submission = new QuestionSubmission { PlayerID = user.ID, QuestionID = id, Answer = newAnswer };
                 _context.QuestionSubmissions.Add(submission);
-            } else
+            }
+            else
             {
-                submission.Answer = request.Answer;
+                submission.Answer = newAnswer;
             }
 
             _context.SaveChanges();
+
+            return Ok();
         }
 
-        // GET api/values/5
-
-        [HttpGet("{id}")]
-        public string Get(int id)
+        private string uploadPhoto(string base64Photo)
         {
-            return "value";
-        }
+            byte[] photoData = Convert.FromBase64String(base64Photo);
 
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
+            Image image;
+            using (MemoryStream ms = new MemoryStream(photoData))
+            {
+                image = Image.FromStream(ms);
+            }
 
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
+            var randomFileName = Guid.NewGuid().ToString() + ".jpg";
+            var relativePath = Path.Combine("uploads/answers", randomFileName);
+            var fullPath = Path.Combine(_webHostEnvironment.WebRootPath, relativePath);
+            image.Save(fullPath, System.Drawing.Imaging.ImageFormat.Jpeg);
 
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            return relativePath;
         }
     }
 }
