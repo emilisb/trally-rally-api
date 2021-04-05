@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using TrallyRally.Entities;
+using TrallyRally.Dtos;
 
 namespace TrallyRally.Models
 {
@@ -25,6 +26,11 @@ namespace TrallyRally.Models
         {
             get { return Phone; }
             set { throw new NotSupportedException("Operation not supported"); }
+        }
+
+        public PlayerDto ConvertToDto()
+        {
+            return new PlayerDto(this);
         }
     }
 }

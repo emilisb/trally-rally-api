@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Drawing;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,6 +11,7 @@ using TrallyRally.Data;
 using TrallyRally.Models;
 using TrallyRally.Services;
 using TrallyRally.Dtos;
+using TrallyRally.Helpers;
 
 namespace TrallyRally.Controllers.API
 {
@@ -98,20 +98,8 @@ namespace TrallyRally.Controllers.API
 
         private string uploadPhoto(string base64Photo)
         {
-            byte[] photoData = Convert.FromBase64String(base64Photo);
-
-            Image image;
-            using (MemoryStream ms = new MemoryStream(photoData))
-            {
-                image = Image.FromStream(ms);
-            }
-
-            var randomFileName = Guid.NewGuid().ToString() + ".jpg";
-            var relativePath = Path.Combine("uploads/answers", randomFileName);
-            var fullPath = Path.Combine(_webHostEnvironment.WebRootPath, relativePath);
-            image.Save(fullPath, System.Drawing.Imaging.ImageFormat.Jpeg);
-
-            return relativePath;
+            var relativePath = Path.Combine("uploads/answers", ImageUploader.RandomJpegName());
+            return ImageUploader.UploadJpeg(base64Photo, _webHostEnvironment.WebRootPath, relativePath);
         }
     }
 }
