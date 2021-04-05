@@ -13,6 +13,11 @@ using TrallyRally.Dtos;
 
 namespace TrallyRally.Controllers.API
 {
+    public class SubmitAnswerRequest
+    {
+        public string Answer { get; set; }
+    }
+
     [Authorize]
     [Route("api/[controller]")]
     public class QuestionsController : Controller
@@ -47,6 +52,24 @@ namespace TrallyRally.Controllers.API
             var questions = game.Questions.ToList();
 
             return questions.ConvertAll(q => q.ConvertToDto());
+        }
+
+        [HttpPut("{id}/submit")]
+        public void Submit(int id, [FromBody] SubmitAnswerRequest request)
+        {
+            var user = _userService.GetUserFromClaims(User);
+            var submission = _context.QuestionSubmissions.FirstOrDefault(x => x.QuestionID == id && x.PlayerID == user.ID);
+
+            if (submission == null)
+            {
+                submission = new QuestionSubmission { PlayerID = user.ID, QuestionID = id, Answer = request.Answer };
+                _context.QuestionSubmissions.Add(submission);
+            } else
+            {
+                submission.Answer = request.Answer;
+            }
+
+            _context.SaveChanges();
         }
 
         // GET api/values/5
