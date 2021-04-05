@@ -8,11 +8,6 @@ namespace TrallyRally.Models
 {
     public class Player : IUser
     {
-        public Player()
-        {
-            this.Games = new HashSet<Game>();
-        }
-
         public int ID { get; set; }
         public string Name { get; set; }
         public string Phone { get; set; }
