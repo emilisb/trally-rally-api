@@ -18,8 +18,8 @@ namespace TrallyRally.Models
         public QuestionType Type { get; set; }
         public int Points { get; set; }
         public int MaxDistance { get; set; }
-        public decimal Latitude { get; set; }
-        public decimal Longitude { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
         public int GameID { get; set; }
 
         public IList<QuestionSubmission> QuestionSubmissions { get; set; }

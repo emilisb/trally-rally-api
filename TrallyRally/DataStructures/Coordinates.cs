@@ -3,7 +3,7 @@ namespace TrallyRally.DataStructures
 {
     public struct Coordinates
     {
-        public decimal Lat { get; set; }
-        public decimal Long { get; set; }
+        public double Lat { get; set; }
+        public double Long { get; set; }
     }
 }

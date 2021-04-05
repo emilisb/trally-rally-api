@@ -15,6 +15,8 @@ namespace TrallyRally.Dtos
         public int MaxDistance { get; set; }
         public Coordinates Coordinates { get; set; }
         public string LastAnswer { get; set; }
+        public bool Submitted { get; set; }
+        public bool Locked { get; set; }
 
         public QuestionDto(Question question)
         {
@@ -26,7 +28,9 @@ namespace TrallyRally.Dtos
             Points = question.Points;
             MaxDistance = question.MaxDistance;
             Coordinates = new Coordinates { Lat = question.Latitude, Long = question.Longitude };
+
             LastAnswer = question.QuestionSubmissions.Count > 0 ? question.QuestionSubmissions[0].Answer : null;
+            Submitted = LastAnswer != null;
         }
     }
 }

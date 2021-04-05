@@ -36,7 +36,7 @@ namespace TrallyRally.Controllers.API
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<QuestionDto>>> Get()
+        public async Task<ActionResult<List<QuestionDto>>> Get(double latitude, double longitude)
         {
             var user = _userService.GetUserFromClaims(User);
             var player = await _context.Players
@@ -52,9 +52,23 @@ namespace TrallyRally.Controllers.API
                 return new List<QuestionDto>();
             }
 
-            var questions = game.Questions.ToList();
+            var index = 0;
+            var questionDtos = game.Questions.ToList().ConvertAll(q => q.ConvertToDto());
+            foreach (var question in questionDtos)
+            {
+                bool locked = Haversine.GetDistance((double)question.Coordinates.Lat, (double)question.Coordinates.Long, latitude, longitude) > question.MaxDistance;
+                question.Locked = locked;
 
-            return questions.ConvertAll(q => q.ConvertToDto());
+                if (locked)
+                {
+                    question.Title = $"-Užrakintas Klausimas {index + 1}-";
+                    question.Text = "";
+                }
+
+                index++;
+            }
+
+            return questionDtos;
         }
 
         [HttpPut("{id}/submit")]
@@ -93,7 +107,7 @@ namespace TrallyRally.Controllers.API
 
             _context.SaveChanges();
 
-            return Ok();
+            return Ok(new { Success = true });
         }
 
         private string uploadPhoto(string base64Photo)

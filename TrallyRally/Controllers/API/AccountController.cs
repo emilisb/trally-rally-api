@@ -14,7 +14,7 @@ namespace TrallyRally.Controllers.API
     {
         public string Name { get; set; }
         public string Phone { get; set; }
-        public string Photo { get; set; }
+        public string Avatar { get; set; }
     }
 
     [ApiController]
@@ -58,9 +58,9 @@ namespace TrallyRally.Controllers.API
                 player.Phone = request.Phone;
             }
 
-            if (!String.IsNullOrEmpty(request.Photo))
+            if (!String.IsNullOrEmpty(request.Avatar))
             {
-                player.Avatar = uploadPhoto(request.Photo);
+                player.Avatar = uploadPhoto(request.Avatar);
             }
 
             _context.SaveChanges();
