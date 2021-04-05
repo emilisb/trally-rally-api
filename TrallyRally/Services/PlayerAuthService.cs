@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using TrallyRally.Models;
+using Microsoft.AspNetCore.Identity;
 using TrallyRally.Entities;
+using TrallyRally.Data;
 
 namespace TrallyRally.Services
 {
@@ -16,22 +16,37 @@ namespace TrallyRally.Services
 
     public class PlayerAuthService : IUserService
     {
-        // users hardcoded for simplicity, store in a db with hashed passwords in production applications
-        private List<IUser> _users = new List<IUser>
+        private readonly DatabaseContext _context;
+
+        public PlayerAuthService(DatabaseContext context)
         {
-            new Player { ID = 1, Phone = "1234", Password = "test" }
-        };
+            _context = context;
+        }
 
         public IUser AttemptLogin(string username, string password)
         {
-            var user = _users.SingleOrDefault(x => x.Username == username && x.Password == password);
+            var user = _context.Players.FirstOrDefault(x => x.Phone == username);
+            if (user == null)
+            {
+                return null;
+            }
 
-            return user;
+            var passwordVerificationResult = new PasswordHasher<IUser>().VerifyHashedPassword(user, user.Password, password);
+
+            switch (passwordVerificationResult)
+            {
+                case PasswordVerificationResult.Success:
+                case PasswordVerificationResult.SuccessRehashNeeded:
+                    return user;
+                case PasswordVerificationResult.Failed:
+                default:
+                    return null;
+            }
         }
 
         public IUser GetById(int id)
         {
-            return _users.FirstOrDefault(x => x.ID == id);
+            return _context.Players.Find(id);
         }
 
         public IUser GetUserFromClaims(ClaimsPrincipal claimsPrincipal)

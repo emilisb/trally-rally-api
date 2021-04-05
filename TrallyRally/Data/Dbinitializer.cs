@@ -1,6 +1,7 @@
 ﻿using TrallyRally.Models;
 using System;
 using System.Linq;
+using Microsoft.AspNetCore.Identity;
 
 namespace TrallyRally.Data
 {
@@ -62,9 +63,10 @@ namespace TrallyRally.Data
                 return;
             }
 
+            var hashedPassword = new PasswordHasher<object?>().HashPassword(null, "123456");
             var players = new Player[]
             {
-                new Player { Name = "Emilis & Co.", Phone = "+37063899324", StartPosition = 21, StartTime = new DateTime(2020, 5, 9, 12, 53, 5) },
+                new Player { Name = "Emilis & Co.", Phone = "+37063899324", StartPosition = 21, StartTime = new DateTime(2020, 5, 9, 12, 53, 5), Password = hashedPassword },
             };
 
             foreach (Player item in players)
