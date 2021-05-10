@@ -95,9 +95,6 @@ namespace TrallyRally.Controllers
 
             if (ModelState.IsValid)
             {
-                var currentQuestion = _context.Questions.AsNoTracking().FirstOrDefault(x => x.ID == id);
-                question.GameID = currentQuestion.GameID;
-
                 try
                 {
                     _context.Update(question);
