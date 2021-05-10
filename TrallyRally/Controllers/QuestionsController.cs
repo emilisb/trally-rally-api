@@ -86,7 +86,7 @@ namespace TrallyRally.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Title,Image,Text,Type")] Question question)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Title,Image,Text,Type,Latitude,Longitude,MaxDistance,Points,GameID")] Question question)
         {
             if (id != question.ID)
             {
@@ -95,6 +95,9 @@ namespace TrallyRally.Controllers
 
             if (ModelState.IsValid)
             {
+                var currentQuestion = _context.Questions.AsNoTracking().FirstOrDefault(x => x.ID == id);
+                question.GameID = currentQuestion.GameID;
+
                 try
                 {
                     _context.Update(question);
