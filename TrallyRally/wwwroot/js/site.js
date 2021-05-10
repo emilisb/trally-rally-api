@@ -4,10 +4,11 @@ function initMap() {
     const longitudeInput = document.getElementsByName('Longitude')[0];
     const maxDistanceInput = document.getElementsByName('MaxDistance')[0];
 
-    const latitude = latitudeInput.value;
-    const longitude = longitudeInput.value;
+    const initLatitude = parseFloat(latitudeInput.value) || 54.6872;
+    const initLongitude = parseFloat(longitudeInput.value) || 25.2797;
+    const initMaxDistance = parseFloat(maxDistanceInput.value) || 50;
 
-    const initLocation = { lat: parseFloat(latitude), lng: parseFloat(longitude) };
+    const initLocation = { lat: initLatitude, lng: initLongitude };
     const map = new google.maps.Map(document.getElementById("map"), {
         zoom: 18,
         center: initLocation,
@@ -22,7 +23,7 @@ function initMap() {
         fillOpacity: 0.35,
         map,
         center: initLocation,
-        radius: 30,
+        radius: initMaxDistance,
         editable: true
     });
 
@@ -42,6 +43,7 @@ function initMap() {
     google.maps.event.addListener(marker, 'dragend', function () {
         latitudeInput.value = marker.getPosition().lat();
         longitudeInput.value = marker.getPosition().lng();
+        distanceCircle.setCenter(marker.getPosition());
     });
 
     google.maps.event.addListener(distanceCircle, 'radius_changed', function () {

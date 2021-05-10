@@ -54,7 +54,7 @@ namespace TrallyRally.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Title,Image,Text,Type")] Question question)
+        public async Task<IActionResult> Create([Bind("ID,Title,Image,Text,Type,Latitude,Longitude,MaxDistance,Points,GameID")] Question question)
         {
             if (ModelState.IsValid)
             {
