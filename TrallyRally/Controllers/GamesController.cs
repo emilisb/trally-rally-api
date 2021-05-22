@@ -7,26 +7,25 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TrallyRally.Data;
 using TrallyRally.Models;
-using Microsoft.AspNetCore.Identity;
 
 namespace TrallyRally.Controllers
 {
-    public class PlayersController : Controller
+    public class GamesController : Controller
     {
         private readonly DatabaseContext _context;
 
-        public PlayersController(DatabaseContext context)
+        public GamesController(DatabaseContext context)
         {
             _context = context;
         }
 
-        // GET: Players
+        // GET: Games
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Players.ToListAsync());
+            return View(await _context.Games.ToListAsync());
         }
 
-        // GET: Players/Details/5
+        // GET: Games/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,40 +33,42 @@ namespace TrallyRally.Controllers
                 return NotFound();
             }
 
-            var player = await _context.Players
+            var game = await _context.Games
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (player == null)
+            if (game == null)
             {
                 return NotFound();
             }
 
-            return View(player);
+            return View(game);
         }
 
-        // GET: Players/Create
+        // GET: Games/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Players/Create
+        // POST: Games/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Phone,Avatar,StartPosition,StartTime,Password")] Player player)
+        public async Task<IActionResult> Create([Bind("ID,Name")] Game game)
         {
             if (ModelState.IsValid)
             {
-                player.Password = new PasswordHasher<Player>().HashPassword(player, player.Password);
-                _context.Add(player);
+                game.CreatedDate = DateTime.Now;
+                game.ModifiedDate = DateTime.Now;
+
+                _context.Add(game);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(player);
+            return View(game);
         }
 
-        // GET: Players/Edit/5
+        // GET: Games/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -75,46 +76,38 @@ namespace TrallyRally.Controllers
                 return NotFound();
             }
 
-            var player = await _context.Players.FindAsync(id);
-            if (player == null)
+            var game = await _context.Games.FindAsync(id);
+            if (game == null)
             {
                 return NotFound();
             }
-            return View(player);
+            return View(game);
         }
 
-        // POST: Players/Edit/5
+        // POST: Games/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Phone,Avatar,StartPosition,StartTime,Password")] Player player)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,CreatedDate")] Game game)
         {
-            if (id != player.ID)
+            if (id != game.ID)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                if (String.IsNullOrWhiteSpace(player.Password))
-                {
-                    var currentPlayer = await _context.Players.AsNoTracking().FirstAsync(x => x.ID == id);
-                    player.Password = currentPlayer.Password;
-                }
-                else
-                {
-                    player.Password = new PasswordHasher<Player>().HashPassword(player, player.Password);
-                }
-
                 try
                 {
-                    _context.Update(player);
+                    game.ModifiedDate = DateTime.Now;
+
+                    _context.Update(game);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PlayerExists(player.ID))
+                    if (!GameExists(game.ID))
                     {
                         return NotFound();
                     }
@@ -125,10 +118,10 @@ namespace TrallyRally.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(player);
+            return View(game);
         }
 
-        // GET: Players/Delete/5
+        // GET: Games/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -136,30 +129,30 @@ namespace TrallyRally.Controllers
                 return NotFound();
             }
 
-            var player = await _context.Players
+            var game = await _context.Games
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (player == null)
+            if (game == null)
             {
                 return NotFound();
             }
 
-            return View(player);
+            return View(game);
         }
 
-        // POST: Players/Delete/5
+        // POST: Games/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var player = await _context.Players.FindAsync(id);
-            _context.Players.Remove(player);
+            var game = await _context.Games.FindAsync(id);
+            _context.Games.Remove(game);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool PlayerExists(int id)
+        private bool GameExists(int id)
         {
-            return _context.Players.Any(e => e.ID == id);
+            return _context.Games.Any(e => e.ID == id);
         }
     }
 }
