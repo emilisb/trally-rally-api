@@ -22,46 +22,94 @@
         </dd>
     </dl>
 
-    <h5>Assigned Questions</h5>
-    <table class="table">
-        <thead>
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <a class="nav-item nav-link active" id="nav-assigned-questions-tab" data-toggle="tab" href="#nav-assigned-questions" role="tab" aria-controls="nav-assigned-questions" aria-selected="true">Game Questions</a>
+            <a class="nav-item nav-link" id="nav-unassigned-questions-tab" data-toggle="tab" href="#nav-unassigned-questions" role="tab" aria-controls="nav-unassigned-questions" aria-selected="false">All Questions</a>
+            <a class="nav-item nav-link" id="nav-assigned-players-tab" data-toggle="tab" href="#nav-assigned-players" role="tab" aria-controls="nav-assigned-players" aria-selected="false">Game Players</a>
+            <a class="nav-item nav-link" id="nav-unassigned-players-tab" data-toggle="tab" href="#nav-unassigned-players" role="tab" aria-controls="nav-unassigned-players" aria-selected="false">All Players</a>
+        </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-assigned-questions" role="tabpanel" aria-labelledby="nav-assigned-questions-tab">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Question Title</th>
+                        <th scope="col">Points</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ foreach (var question in (List<Question>)ViewData["AssignedQuestions"])
+                        {
             <tr>
-                <th scope="col">Question Title</th>
-                <th scope="col">Points</th>
-                <th scope="col">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @{ foreach (var question in (List<Question>)ViewData["AssignedQuestions"])
-                {
-        <tr>
-            <td>@question.Title</td>
-            <td>@question.Points</td>
-            <td><a asp-action="QuestionUnassign" asp-route-gameID="@Model.ID" asp-route-questionID="@question.ID">Unassign</a></td>
-        </tr> } }
-        </tbody>
-    </table>
-
-    <h5>Non-Assigned Questions</h5>
-    <table class="table">
-        <thead>
+                <td>@question.Title</td>
+                <td>@question.Points</td>
+                <td><a asp-action="QuestionUnassign" asp-route-gameID="@Model.ID" asp-route-questionID="@question.ID">Unassign</a></td>
+            </tr> } }
+                </tbody>
+            </table>
+        </div>
+        <div class="tab-pane fade" id="nav-unassigned-questions" role="tabpanel" aria-labelledby="nav-unassigned-questions-tab">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Question Title</th>
+                        <th scope="col">Points</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ foreach (var question in (List<Question>)ViewData["NonAssignedQuestions"])
+                        {
             <tr>
-                <th scope="col">Question Title</th>
-                <th scope="col">Points</th>
-                <th scope="col">Actions</th>
+                <td>@question.Title</td>
+                <td>@question.Points</td>
+                <td><a asp-action="QuestionAssign" asp-route-gameID="@Model.ID" asp-route-questionID="@question.ID">Assign</a></td>
+            </tr> } }
+                </tbody>
+            </table>
+        </div>
+        <div class="tab-pane fade" id="nav-assigned-players" role="tabpanel" aria-labelledby="nav-assigned-players-tab">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Player</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ foreach (var player in (List<Player>)ViewData["AssignedPlayers"])
+                        {
+            <tr>
+                <td>@player.Name</td>
+                <td><a asp-action="PlayerUnassign" asp-route-gameID="@Model.ID" asp-route-playerID="@player.ID">Unassign</a></td>
             </tr>
-        </thead>
-        <tbody>
-            @{ foreach (var question in (List<Question>)ViewData["NonAssignedQuestions"])
-                {
-        <tr>
-            <td>@question.Title</td>
-            <td>@question.Points</td>
-            <td><a asp-action="QuestionAssign" asp-route-gameID="@Model.ID" asp-route-questionID="@question.ID">Assign</a></td>
-        </tr> } }
-        </tbody>
-    </table>
-
+ } }
+                </tbody>
+            </table>
+        </div>
+        <div class="tab-pane fade" id="nav-unassigned-players" role="tabpanel" aria-labelledby="nav-unassigned-players-tab">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Player</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ foreach (var player in (List<Player>)ViewData["NonAssignedPlayers"])
+                        {
+            <tr>
+                <td>@player.Name</td>
+                <td><a asp-action="PlayerAssign" asp-route-gameID="@Model.ID" asp-route-playerID="@player.ID">Assign</a></td>
+            </tr>
+ } }
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.ID">Edit</a> |

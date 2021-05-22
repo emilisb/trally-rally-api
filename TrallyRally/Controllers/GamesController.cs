@@ -44,9 +44,15 @@ namespace TrallyRally.Controllers
             var assignedQuestions = questions.Where(q => q.Games.Select(g => g.ID).ToList().Contains(game.ID)).ToList();
             var nonAssignedQuestions = questions.Except(assignedQuestions).ToList();
 
-            ViewData["Questions"] = questions;
+            var players = await _context.Players.Include(x => x.Games).ToListAsync();
+            var assignedPlayers = players.Where(q => q.Games.Select(g => g.ID).ToList().Contains(game.ID)).ToList();
+            var nonAssignedPlayers = players.Except(assignedPlayers).ToList();
+
             ViewData["AssignedQuestions"] = assignedQuestions;
             ViewData["NonAssignedQuestions"] = nonAssignedQuestions;
+
+            ViewData["AssignedPlayers"] = assignedPlayers;
+            ViewData["NonAssignedPlayers"] = nonAssignedPlayers;
 
             return View(game);
         }
@@ -182,6 +188,34 @@ namespace TrallyRally.Controllers
             }
 
             game.Questions.Remove(question);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Details), new { id = gameID });
+        }
+
+        public async Task<IActionResult> PlayerAssign(int gameID, int playerID)
+        {
+            var game = await _context.Games.Include(x => x.Players).Where(x => x.ID == gameID).FirstOrDefaultAsync();
+            var player = await _context.Players.FindAsync(playerID);
+            if (game == null || player == null)
+            {
+                return NotFound();
+            }
+
+            game.Players.Add(player);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Details), new { id = gameID });
+        }
+
+        public async Task<IActionResult> PlayerUnassign(int gameID, int playerID)
+        {
+            var game = await _context.Games.Include(x => x.Players).Where(x => x.ID == gameID).FirstOrDefaultAsync();
+            var player = await _context.Players.FindAsync(playerID);
+            if (game == null || player == null)
+            {
+                return NotFound();
+            }
+
+            game.Players.Remove(player);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Details), new { id = gameID });
         }
