@@ -40,6 +40,14 @@ namespace TrallyRally.Controllers
                 return NotFound();
             }
 
+            var questions = await _context.Questions.Include(x => x.Games).ToListAsync();
+            var assignedQuestions = questions.Where(q => q.Games.Select(g => g.ID).ToList().Contains(game.ID)).ToList();
+            var nonAssignedQuestions = questions.Except(assignedQuestions).ToList();
+
+            ViewData["Questions"] = questions;
+            ViewData["AssignedQuestions"] = assignedQuestions;
+            ViewData["NonAssignedQuestions"] = nonAssignedQuestions;
+
             return View(game);
         }
 
@@ -148,6 +156,34 @@ namespace TrallyRally.Controllers
             _context.Games.Remove(game);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> QuestionAssign(int gameID, int questionID)
+        {
+            var game = await _context.Games.Include(x => x.Questions).Where(x => x.ID == gameID).FirstOrDefaultAsync();
+            var question = await _context.Questions.FindAsync(questionID);
+            if (game == null || question == null)
+            {
+                return NotFound();
+            }
+
+            game.Questions.Add(question);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Details), new { id = gameID });
+        }
+
+        public async Task<IActionResult> QuestionUnassign(int gameID, int questionID)
+        {
+            var game = await _context.Games.Include(x => x.Questions).Where(x => x.ID == gameID).FirstOrDefaultAsync();
+            var question = await _context.Questions.FindAsync(questionID);
+            if (game == null || question == null)
+            {
+                return NotFound();
+            }
+
+            game.Questions.Remove(question);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Details), new { id = gameID });
         }
 
         private bool GameExists(int id)

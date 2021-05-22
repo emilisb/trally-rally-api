@@ -1,8 +1,6 @@
 @model TrallyRally.Models.Game
 
-@{
-    ViewData["Title"] = "Details";
-}
+@{ ViewData["Title"] = "Details"; }
 
 <h1>Details</h1>
 
@@ -10,25 +8,60 @@
     <h4>Game</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Name)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Name)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.CreatedDate)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.CreatedDate)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ModifiedDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ModifiedDate)
-        </dd>
     </dl>
+
+    <h5>Assigned Questions</h5>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Question Title</th>
+                <th scope="col">Points</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ foreach (var question in (List<Question>)ViewData["AssignedQuestions"])
+                {
+        <tr>
+            <td>@question.Title</td>
+            <td>@question.Points</td>
+            <td><a asp-action="QuestionUnassign" asp-route-gameID="@Model.ID" asp-route-questionID="@question.ID">Unassign</a></td>
+        </tr> } }
+        </tbody>
+    </table>
+
+    <h5>Non-Assigned Questions</h5>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Question Title</th>
+                <th scope="col">Points</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ foreach (var question in (List<Question>)ViewData["NonAssignedQuestions"])
+                {
+        <tr>
+            <td>@question.Title</td>
+            <td>@question.Points</td>
+            <td><a asp-action="QuestionAssign" asp-route-gameID="@Model.ID" asp-route-questionID="@question.ID">Assign</a></td>
+        </tr> } }
+        </tbody>
+    </table>
+
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.ID">Edit</a> |
