@@ -39,11 +39,7 @@ namespace TrallyRally.Controllers.API
         public async Task<ActionResult<List<QuestionDto>>> Get(double latitude, double longitude)
         {
             var user = _userService.GetUserFromClaims(User);
-            var player = await _context.Players
-                .Include(player => player.Games)
-                .ThenInclude(game => game.Questions)
-                .ThenInclude(question => question.QuestionSubmissions.Where(submission => submission.PlayerID == user.ID))
-                .FirstOrDefaultAsync();
+            var player = getPlayerWithQuestionsAndSubmissions(user.ID);
 
             var game = player.Games.OrderByDescending(game => game.CreatedDate).FirstOrDefault();
 
@@ -75,7 +71,10 @@ namespace TrallyRally.Controllers.API
         public IActionResult Submit(int id, [FromBody] SubmitAnswerRequest request)
         {
             var user = _userService.GetUserFromClaims(User);
-            var question = _context.Questions.Find(id);
+            var player = getPlayerWithQuestionsAndSubmissions(user.ID);
+            var game = player.Games.OrderByDescending(game => game.CreatedDate).FirstOrDefault();
+
+            var question = game.Questions.FirstOrDefault(q => q.ID == id);
             if (question == null)
             {
                 return NotFound();
@@ -97,7 +96,7 @@ namespace TrallyRally.Controllers.API
 
             if (submission == null)
             {
-                submission = new QuestionSubmission { PlayerID = user.ID, QuestionID = id, Answer = newAnswer };
+                submission = new QuestionSubmission { PlayerID = user.ID, QuestionID = id, GameID = game.ID, Answer = newAnswer };
                 _context.QuestionSubmissions.Add(submission);
             }
             else
@@ -108,6 +107,15 @@ namespace TrallyRally.Controllers.API
             _context.SaveChanges();
 
             return Ok(new { Success = true });
+        }
+
+        private Player getPlayerWithQuestionsAndSubmissions(int id)
+        {
+            return _context.Players
+                .Include(player => player.Games)
+                .ThenInclude(game => game.Questions)
+                .ThenInclude(question => question.QuestionSubmissions.Where(submission => submission.PlayerID == id))
+                .FirstOrDefault();
         }
 
         private string uploadPhoto(string base64Photo)

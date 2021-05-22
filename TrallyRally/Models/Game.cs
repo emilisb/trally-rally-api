@@ -17,5 +17,6 @@ namespace TrallyRally.Models
 
         public ICollection<Question> Questions { get; set; }
         public ICollection<Player> Players { get; set; }
+        public ICollection<QuestionSubmission> QuestionSubmissions { get; set; }
     }
 }

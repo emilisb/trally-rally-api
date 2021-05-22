@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TrallyRally.Data;
 
 namespace TrallyRally.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20210522140322_AddQuestionSubmissionsToGame")]
+    partial class AddQuestionSubmissionsToGame
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -142,9 +144,6 @@ namespace TrallyRally.Migrations
                     b.Property<string>("Answer")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<bool?>("Correct")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<DateTime>("CreatedDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime(6)");
@@ -217,15 +216,13 @@ namespace TrallyRally.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TrallyRally.Models.Question", "Question")
+                    b.HasOne("TrallyRally.Models.Question", null)
                         .WithMany("QuestionSubmissions")
                         .HasForeignKey("QuestionID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Player");
-
-                    b.Navigation("Question");
                 });
 
             modelBuilder.Entity("TrallyRally.Models.Game", b =>

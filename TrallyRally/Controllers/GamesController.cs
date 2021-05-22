@@ -34,6 +34,7 @@ namespace TrallyRally.Controllers
             }
 
             var game = await _context.Games
+                .Include(x => x.QuestionSubmissions)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (game == null)
             {
@@ -218,6 +219,20 @@ namespace TrallyRally.Controllers
             game.Players.Remove(player);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Details), new { id = gameID });
+        }
+
+        public async Task<IActionResult> EvaluateSubmission(int submissionID, bool correct)
+        {
+            var submission = await _context.QuestionSubmissions.FirstOrDefaultAsync(x => x.ID == submissionID);
+            if (submission == null)
+            {
+                return NotFound();
+            }
+
+            submission.Correct = correct;
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Details), new { id = submission.GameID });
         }
 
         private bool GameExists(int id)

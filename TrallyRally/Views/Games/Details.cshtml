@@ -28,6 +28,7 @@
             <a class="nav-item nav-link" id="nav-unassigned-questions-tab" data-toggle="tab" href="#nav-unassigned-questions" role="tab" aria-controls="nav-unassigned-questions" aria-selected="false">All Questions</a>
             <a class="nav-item nav-link" id="nav-assigned-players-tab" data-toggle="tab" href="#nav-assigned-players" role="tab" aria-controls="nav-assigned-players" aria-selected="false">Game Players</a>
             <a class="nav-item nav-link" id="nav-unassigned-players-tab" data-toggle="tab" href="#nav-unassigned-players" role="tab" aria-controls="nav-unassigned-players" aria-selected="false">All Players</a>
+            <a class="nav-item nav-link" id="nav-submissions-tab" data-toggle="tab" href="#nav-submissions" role="tab" aria-controls="nav-submissions" aria-selected="false">Submissions (@Model.QuestionSubmissions.Where(x => x.Correct == null).Count())</a>
         </div>
     </nav>
     <div class="tab-content" id="nav-tabContent">
@@ -47,7 +48,8 @@
                 <td>@question.Title</td>
                 <td>@question.Points</td>
                 <td><a asp-action="QuestionUnassign" asp-route-gameID="@Model.ID" asp-route-questionID="@question.ID">Unassign</a></td>
-            </tr> } }
+            </tr>
+ } }
                 </tbody>
             </table>
         </div>
@@ -67,7 +69,8 @@
                 <td>@question.Title</td>
                 <td>@question.Points</td>
                 <td><a asp-action="QuestionAssign" asp-route-gameID="@Model.ID" asp-route-questionID="@question.ID">Assign</a></td>
-            </tr> } }
+            </tr>
+ } }
                 </tbody>
             </table>
         </div>
@@ -85,8 +88,7 @@
             <tr>
                 <td>@player.Name</td>
                 <td><a asp-action="PlayerUnassign" asp-route-gameID="@Model.ID" asp-route-playerID="@player.ID">Unassign</a></td>
-            </tr>
- } }
+            </tr> } }
                 </tbody>
             </table>
         </div>
@@ -104,8 +106,39 @@
             <tr>
                 <td>@player.Name</td>
                 <td><a asp-action="PlayerAssign" asp-route-gameID="@Model.ID" asp-route-playerID="@player.ID">Assign</a></td>
-            </tr>
- } }
+            </tr> } }
+                </tbody>
+            </table>
+        </div>
+        <div class="tab-pane fade" id="nav-submissions" role="tabpanel" aria-labelledby="nav-submissions-tab">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Player</th>
+                        <th scope="col">Question</th>
+                        <th scope="col">Answer</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ foreach (var submission in Model.QuestionSubmissions.OrderBy(x => x.Correct != null))
+                        {
+            <tr>
+                <td>@submission.Player.Name</td>
+                <td>@submission.Question.Title</td>
+                <td>@submission.Answer</td>
+                <td>@(submission.Correct == null ? "--Not yet evaluated--" : (submission.Correct == true ? "Correct" : "Incorrect"))</td>
+                <td>
+                    @{if (submission.Correct != true)
+                        {
+        <a asp-action="EvaluateSubmission" asp-route-submissionID="@submission.ID" asp-route-correct="true">Mark as Correct</a>
+                            <br /> } }
+                    @{if (submission.Correct != false)
+                        {
+        <a asp-action="EvaluateSubmission" asp-route-submissionID="@submission.ID" asp-route-correct="false">Mark as Incorrect</a> } }
+                </td>
+            </tr> } }
                 </tbody>
             </table>
         </div>
