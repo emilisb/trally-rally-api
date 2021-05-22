@@ -165,58 +165,56 @@ namespace TrallyRally.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> QuestionAssign(int gameID, int questionID)
+        public async Task<IActionResult> QuestionAssign(int gameID, int questionID, string type)
         {
             var game = await _context.Games.Include(x => x.Questions).Where(x => x.ID == gameID).FirstOrDefaultAsync();
             var question = await _context.Questions.FindAsync(questionID);
+
             if (game == null || question == null)
             {
                 return NotFound();
             }
 
-            game.Questions.Add(question);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Details), new { id = gameID });
-        }
-
-        public async Task<IActionResult> QuestionUnassign(int gameID, int questionID)
-        {
-            var game = await _context.Games.Include(x => x.Questions).Where(x => x.ID == gameID).FirstOrDefaultAsync();
-            var question = await _context.Questions.FindAsync(questionID);
-            if (game == null || question == null)
+            if (type == "add")
             {
-                return NotFound();
+                game.Questions.Add(question);
+            }
+            else if (type == "remove")
+            {
+                game.Questions.Remove(question);
+            }
+            else
+            {
+                return BadRequest();
             }
 
-            game.Questions.Remove(question);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Details), new { id = gameID });
         }
 
-        public async Task<IActionResult> PlayerAssign(int gameID, int playerID)
+        public async Task<IActionResult> PlayerAssign(int gameID, int playerID, string type)
         {
             var game = await _context.Games.Include(x => x.Players).Where(x => x.ID == gameID).FirstOrDefaultAsync();
             var player = await _context.Players.FindAsync(playerID);
+
             if (game == null || player == null)
             {
                 return NotFound();
             }
 
-            game.Players.Add(player);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Details), new { id = gameID });
-        }
-
-        public async Task<IActionResult> PlayerUnassign(int gameID, int playerID)
-        {
-            var game = await _context.Games.Include(x => x.Players).Where(x => x.ID == gameID).FirstOrDefaultAsync();
-            var player = await _context.Players.FindAsync(playerID);
-            if (game == null || player == null)
+            if (type == "add")
             {
-                return NotFound();
+                game.Players.Add(player);
+            }
+            else if (type == "remove")
+            {
+                game.Players.Remove(player);
+            }
+            else
+            {
+                return BadRequest();
             }
 
-            game.Players.Remove(player);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Details), new { id = gameID });
         }

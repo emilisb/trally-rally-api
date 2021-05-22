@@ -47,9 +47,8 @@
             <tr>
                 <td>@question.Title</td>
                 <td>@question.Points</td>
-                <td><a asp-action="QuestionUnassign" asp-route-gameID="@Model.ID" asp-route-questionID="@question.ID">Unassign</a></td>
-            </tr>
- } }
+                <td><a asp-action="QuestionAssign" asp-route-gameID="@Model.ID" asp-route-questionID="@question.ID" asp-route-type="remove">Unassign</a></td>
+            </tr> } }
                 </tbody>
             </table>
         </div>
@@ -68,9 +67,8 @@
             <tr>
                 <td>@question.Title</td>
                 <td>@question.Points</td>
-                <td><a asp-action="QuestionAssign" asp-route-gameID="@Model.ID" asp-route-questionID="@question.ID">Assign</a></td>
-            </tr>
- } }
+                <td><a asp-action="QuestionAssign" asp-route-gameID="@Model.ID" asp-route-questionID="@question.ID" asp-route-type="add">Assign</a></td>
+            </tr> } }
                 </tbody>
             </table>
         </div>
@@ -87,8 +85,9 @@
                         {
             <tr>
                 <td>@player.Name</td>
-                <td><a asp-action="PlayerUnassign" asp-route-gameID="@Model.ID" asp-route-playerID="@player.ID">Unassign</a></td>
-            </tr> } }
+                <td><a asp-action="PlayerAssign" asp-route-gameID="@Model.ID" asp-route-playerID="@player.ID" asp-route-type="remove">Unassign</a></td>
+            </tr>
+ } }
                 </tbody>
             </table>
         </div>
@@ -105,8 +104,9 @@
                         {
             <tr>
                 <td>@player.Name</td>
-                <td><a asp-action="PlayerAssign" asp-route-gameID="@Model.ID" asp-route-playerID="@player.ID">Assign</a></td>
-            </tr> } }
+                <td><a asp-action="PlayerAssign" asp-route-gameID="@Model.ID" asp-route-playerID="@player.ID" asp-route-type="add">Assign</a></td>
+            </tr>
+ } }
                 </tbody>
             </table>
         </div>
@@ -138,7 +138,8 @@
                         {
         <a asp-action="EvaluateSubmission" asp-route-submissionID="@submission.ID" asp-route-correct="false">Mark as Incorrect</a> } }
                 </td>
-            </tr> } }
+            </tr>
+ } }
                 </tbody>
             </table>
         </div>
