@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using TrallyRally.Dtos;
 
 namespace TrallyRally.Models
@@ -13,8 +14,12 @@ namespace TrallyRally.Models
     {
         public int ID { get; set; }
         public string Title { get; set; }
-        public string Image { get; set; }
+        public string? Image { get; set; }
         public string Text { get; set; }
+
+        [JsonIgnore]
+        public string? Answer { get; set; }
+
         public QuestionType Type { get; set; }
         public int Points { get; set; }
         public int MaxDistance { get; set; }

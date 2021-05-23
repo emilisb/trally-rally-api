@@ -60,10 +60,15 @@ namespace TrallyRally.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Title,Text,Type,Latitude,Longitude,MaxDistance,Points")] Question question, IFormFile newImage)
+        public async Task<IActionResult> Create([Bind("ID,Title,Text,Answer,Type,Latitude,Longitude,MaxDistance,Points")] Question question, IFormFile newImage)
         {
             if (ModelState.IsValid)
             {
+                if (question.Type == QuestionType.QR && String.IsNullOrEmpty(question.Answer))
+                {
+                    question.Answer = "trally-rally-" + Guid.NewGuid().ToString();
+                }
+
                 if (newImage != null)
                 {
                     using (var stream = newImage.OpenReadStream())
@@ -100,7 +105,7 @@ namespace TrallyRally.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Title,Image,Text,Type,Latitude,Longitude,MaxDistance,Points")] Question question, IFormFile newImage)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Title,Image,Text,Answer,Type,Latitude,Longitude,MaxDistance,Points")] Question question, IFormFile newImage)
         {
             if (id != question.ID)
             {
