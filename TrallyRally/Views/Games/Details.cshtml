@@ -51,7 +51,8 @@
                                 <td>@question.Title</td>
                                 <td>@question.Points</td>
                                 <td><a asp-action="QuestionAssign" asp-route-gameID="@Model.ID" asp-route-questionID="@question.ID" asp-route-type="remove">Unassign</a></td>
-                            </tr> } }
+                            </tr>
+ } }
                                 </tbody>
                             </table>
                         </div>
@@ -71,7 +72,8 @@
                                 <td>@question.Title</td>
                                 <td>@question.Points</td>
                                 <td><a asp-action="QuestionAssign" asp-route-gameID="@Model.ID" asp-route-questionID="@question.ID" asp-route-type="add">Assign</a></td>
-                            </tr> } }
+                            </tr>
+ } }
                                 </tbody>
                             </table>
                         </div>
@@ -89,8 +91,7 @@
                             <tr>
                                 <td>@player.Name</td>
                                 <td><a asp-action="PlayerAssign" asp-route-gameID="@Model.ID" asp-route-playerID="@player.ID" asp-route-type="remove">Unassign</a></td>
-                            </tr>
- } }
+                            </tr> } }
                                 </tbody>
                             </table>
                         </div>
@@ -108,8 +109,7 @@
                             <tr>
                                 <td>@player.Name</td>
                                 <td><a asp-action="PlayerAssign" asp-route-gameID="@Model.ID" asp-route-playerID="@player.ID" asp-route-type="add">Assign</a></td>
-                            </tr>
- } }
+                            </tr> } }
                                 </tbody>
                             </table>
                         </div>
@@ -130,7 +130,16 @@
                             <tr>
                                 <td>@submission.Player.Name</td>
                                 <td>@submission.Question.Title</td>
-                                <td>@submission.Answer</td>
+                                <td>
+                                    @if (submission.Question.Type == QuestionType.PHOTO)
+                                    {
+                    <a href="~/@submission.Answer" data-toggle="lightbox" data-title="@submission.Player.Name answer for @submission.Question.Title">
+                        <img src="~/@submission.Answer" class="img-fluid mb-2" alt="@submission.Player.Name answer for @submission.Question.Title" style="max-width: 300px; max-height: 300px" />
+                    </a> }
+                                    else
+                                    {
+                    @submission.Answer}
+                                </td>
                                 <td>@(submission.Correct == null ? "--Not yet evaluated--" : (submission.Correct == true ? "Correct" : "Incorrect"))</td>
                                 <td>
                                     @{if (submission.Correct != true)
@@ -141,8 +150,7 @@
                                         {
                         <a asp-action="EvaluateSubmission" asp-route-submissionID="@submission.ID" asp-route-correct="false">Mark as Incorrect</a> } }
                                 </td>
-                            </tr>
- } }
+                            </tr> } }
                                 </tbody>
                             </table>
                         </div>
@@ -152,3 +160,7 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_LightboxPartial");}
+}
