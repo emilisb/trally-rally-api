@@ -39,7 +39,7 @@ namespace TrallyRally.Controllers.API
         public async Task<ActionResult<List<QuestionDto>>> Get(double latitude, double longitude)
         {
             var user = _userService.GetUserFromClaims(User);
-            var player = getPlayerWithQuestionsAndSubmissions(user.ID);
+            var player = GetPlayerWithQuestionsAndSubmissions(user.ID);
 
             var game = player.Games.OrderByDescending(game => game.CreatedDate).FirstOrDefault();
 
@@ -71,7 +71,7 @@ namespace TrallyRally.Controllers.API
         public IActionResult Submit(int id, [FromBody] SubmitAnswerRequest request)
         {
             var user = _userService.GetUserFromClaims(User);
-            var player = getPlayerWithQuestionsAndSubmissions(user.ID);
+            var player = GetPlayerWithQuestionsAndSubmissions(user.ID);
             var game = player.Games.OrderByDescending(game => game.CreatedDate).FirstOrDefault();
 
             var question = game.Questions.FirstOrDefault(q => q.ID == id);
@@ -89,7 +89,7 @@ namespace TrallyRally.Controllers.API
                     return BadRequest();
                 }
 
-                newAnswer = uploadPhoto(request.Answer);
+                newAnswer = UploadPhoto(request.Answer);
             }
 
             var submission = _context.QuestionSubmissions.FirstOrDefault(x => x.QuestionID == id && x.PlayerID == user.ID);
@@ -104,12 +104,28 @@ namespace TrallyRally.Controllers.API
                 submission.Answer = newAnswer;
             }
 
+            var questionHasAnswer = !String.IsNullOrEmpty(question.Answer);
+
+            if (questionHasAnswer)
+            {
+                if (question.Type == QuestionType.QR || question.Answer == newAnswer)
+                {
+                    submission.Correct = question.Answer == newAnswer;
+                }
+            }
+            else
+            {
+                // Set correct status to null so administrator would have to correct answer again
+                // (in case of player guessing the correct answer and then changing the answer to wrong)
+                submission.Correct = null;
+            }
+
             _context.SaveChanges();
 
             return Ok(new { Success = true });
         }
 
-        private Player getPlayerWithQuestionsAndSubmissions(int id)
+        private Player GetPlayerWithQuestionsAndSubmissions(int id)
         {
             return _context.Players
                 .Include(player => player.Games)
@@ -118,7 +134,7 @@ namespace TrallyRally.Controllers.API
                 .FirstOrDefault();
         }
 
-        private string uploadPhoto(string base64Photo)
+        private string UploadPhoto(string base64Photo)
         {
             var relativePath = Path.Combine("uploads/answers", ImageUploader.RandomJpegName());
             return ImageUploader.UploadJpeg(base64Photo, _webHostEnvironment.WebRootPath, relativePath);
