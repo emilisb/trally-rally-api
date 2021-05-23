@@ -11,7 +11,6 @@
                         <thead>
                             <tr>
                                 <th>@Html.DisplayNameFor(model => model.Title)</th>
-                                <th>@Html.DisplayNameFor(model => model.Image)</th>
                                 <th>@Html.DisplayNameFor(model => model.Text)</th>
                                 <th>@Html.DisplayNameFor(model => model.Type)</th>
                                 <th></th>
@@ -22,8 +21,23 @@
                             {
                 <tr>
                     <td>@Html.DisplayFor(modelItem => item.Title)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Image)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Text)</td>
+                    <td>
+                        @if (String.IsNullOrEmpty(item.Image))
+                        {
+        @Html.DisplayFor(modelItem => item.Text) }
+    else
+    {
+<div class="row">
+    <div class="col-md-2">
+        <a href="~/@item.Image" data-toggle="lightbox" data-title="@item.Title - Attached photo">
+            <img src="~/@item.Image" class="img-fluid mb-2" alt="@item.Title - Attached photo" />
+        </a>
+    </div>
+    <div class="col-md-10">
+        @Html.DisplayFor(modelItem => item.Text)
+    </div>
+</div>}
+                    </td>
                     <td>@Html.DisplayFor(modelItem => item.Type)</td>
                     <td>
                         <a role="button" class="btn btn-info" asp-action="Details" asp-route-id="@item.ID">
@@ -102,4 +116,6 @@
                 "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
             }).buttons().container().appendTo('#datatable_wrapper .col-md-6:eq(0)');
         });</script>
+
+    @{await Html.RenderPartialAsync("_LightboxPartial");}
 }
