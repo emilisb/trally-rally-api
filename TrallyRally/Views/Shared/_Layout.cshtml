@@ -76,8 +76,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                 </p>
                             </a>
                         </li>
-                        <li class="nav-item menu-open">
-                            <a class="nav-link active" asp-area="" asp-controller="Games" asp-action="Index">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Games" asp-action="Index">
                                 <i class="nav-icon fas fa-gamepad"></i>
                                 <p>
                                     Games
@@ -86,7 +86,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a class="nav-link active" asp-area="" asp-controller="Games" asp-action="Index">
+                                    <a class="nav-link" asp-area="" asp-controller="Games" asp-action="Index">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>All games</p>
                                     </a>
@@ -118,6 +118,29 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                     <a class="nav-link" asp-area="" asp-controller="Players" asp-action="Create">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Add new player</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Questions" asp-action="Index">
+                                <i class="nav-icon fas fa-question-circle"></i>
+                                <p>
+                                    Questions
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Questions" asp-action="Index">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>All questions</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Questions" asp-action="Create">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Add new question</p>
                                     </a>
                                 </li>
                             </ul>
