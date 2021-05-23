@@ -4,7 +4,7 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-8">
             <div class="card card-primary">
                 <div class="card-header">
                     <h3 class="card-title">Player details</h3>
@@ -45,5 +45,23 @@
                 </div>
             </div>
         </div>
+        @if (!String.IsNullOrEmpty(Model.Avatar))
+        {
+<div class="col-md-4">
+    <div class="card card-secondary">
+        <div class="card-header">
+            <h3 class="card-title">Photo</h3>
+        </div>
+        <div class="card-body">
+            <a href="~/@Model.Avatar" data-toggle="lightbox" data-title="Team photo">
+                <img src="~/@Model.Avatar" class="img-fluid mb-2" alt="Team photo" />
+            </a>
+        </div>
+    </div>
+</div>}
     </div>
 </div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_LightboxPartial");}
+}
