@@ -99,6 +99,29 @@ scratch. This page gets rid of all links and provides the needed markup only.
                                 </li>
                             </ul>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="Players" asp-action="Index">
+                                <i class="nav-icon fas fa-user-friends"></i>
+                                <p>
+                                    Players
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Players" asp-action="Index">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>All players</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Players" asp-action="Create">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Add new player</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
                     </ul>
                 </nav>
                 <!-- /.sidebar-menu -->

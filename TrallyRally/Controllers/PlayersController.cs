@@ -128,24 +128,6 @@ namespace TrallyRally.Controllers
             return View(player);
         }
 
-        // GET: Players/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var player = await _context.Players
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (player == null)
-            {
-                return NotFound();
-            }
-
-            return View(player);
-        }
-
         // POST: Players/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
