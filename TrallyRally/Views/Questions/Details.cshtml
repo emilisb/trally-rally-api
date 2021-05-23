@@ -33,23 +33,38 @@
                 </div>
             </div>
         </div>
-        @if (!String.IsNullOrEmpty(Model.Image))
-        {
-<div class="col-md-6">
-    <div class="card card-secondary">
-        <div class="card-header">
-            <h3 class="card-title">Photo</h3>
-        </div>
-        <div class="card-body">
-            <a href="~/@Model.Image" data-toggle="lightbox" data-title="@Model.Title - Attached photo">
-                <img src="~/@Model.Image" class="img-fluid mb-2" alt="@Model.Title - Attached photo" />
-            </a>
-        </div>
+        <div class="col-md-6">
+            @if (!String.IsNullOrEmpty(Model.Image))
+            {
+<div class="card card-secondary">
+    <div class="card-header">
+        <h3 class="card-title">Photo</h3>
+    </div>
+    <div class="card-body">
+        <a href="~/@Model.Image" data-toggle="lightbox" data-title="@Model.Title - Attached photo">
+            <img src="~/@Model.Image" class="img-fluid mb-2" alt="@Model.Title - Attached photo" />
+        </a>
+    </div>
+</div>            }
+            @if (Model.Type == QuestionType.QR)
+            {
+<div class="card card-info">
+    <div class="card-header">
+        <h3 class="card-title">QR Code</h3>
+    </div>
+    <div class="card-body">
+        <div id="qrcode"></div>
     </div>
 </div>}
+        </div>
     </div>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_LightboxPartial");}
+
+    @if (Model.Type == QuestionType.QR)
+    {
+<script src="~/lib/qrcode/qrcode.min.js"></script>
+                    <script type="text/javascript">new QRCode(document.getElementById("qrcode"), "trally-qr-@Model.ID");</script>}
 }
