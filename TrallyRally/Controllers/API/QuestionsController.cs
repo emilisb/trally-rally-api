@@ -96,28 +96,13 @@ namespace TrallyRally.Controllers.API
 
             if (submission == null)
             {
-                submission = new QuestionSubmission { PlayerID = user.ID, QuestionID = id, GameID = game.ID, Answer = newAnswer };
+                submission = new QuestionSubmission { PlayerID = user.ID, QuestionID = id, GameID = game.ID, Answer = newAnswer, Correct = IsAnswerCorrect(question, newAnswer) };
                 _context.QuestionSubmissions.Add(submission);
             }
             else
             {
                 submission.Answer = newAnswer;
-            }
-
-            var questionHasAnswer = !String.IsNullOrEmpty(question.Answer);
-
-            if (questionHasAnswer)
-            {
-                if (question.Type == QuestionType.QR || question.Answer == newAnswer)
-                {
-                    submission.Correct = question.Answer == newAnswer;
-                }
-            }
-            else
-            {
-                // Set correct status to null so administrator would have to correct answer again
-                // (in case of player guessing the correct answer and then changing the answer to wrong)
-                submission.Correct = null;
+                submission.Correct = IsAnswerCorrect(question, newAnswer);
             }
 
             _context.SaveChanges();
@@ -128,6 +113,7 @@ namespace TrallyRally.Controllers.API
         private Player GetPlayerWithQuestionsAndSubmissions(int id)
         {
             return _context.Players
+                .Where(player => player.ID == id)
                 .Include(player => player.Games)
                 .ThenInclude(game => game.Questions)
                 .ThenInclude(question => question.QuestionSubmissions.Where(submission => submission.PlayerID == id))
@@ -138,6 +124,24 @@ namespace TrallyRally.Controllers.API
         {
             var relativePath = Path.Combine("uploads/answers", ImageUploader.RandomJpegName());
             return ImageUploader.UploadJpeg(base64Photo, _webHostEnvironment.WebRootPath, relativePath);
+        }
+
+        private bool? IsAnswerCorrect(Question question, string newAnswer)
+        {
+            var questionHasAnswer = !String.IsNullOrEmpty(question.Answer);
+
+            if (questionHasAnswer)
+            {
+                var answersMatch = question.Answer.ToLower() == newAnswer.ToLower();
+                if (question.Type == QuestionType.QR || answersMatch)
+                {
+                    return answersMatch;
+                }
+            }
+
+            // Set correct status to null so administrator would have to correct answer again
+            // (in case of player guessing the correct answer and then changing the answer to wrong)
+            return null;
         }
     }
 }

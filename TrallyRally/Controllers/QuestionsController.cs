@@ -73,7 +73,7 @@ namespace TrallyRally.Controllers
                 {
                     using (var stream = newImage.OpenReadStream())
                     {
-                        question.Image = uploadPhoto(stream);
+                        question.Image = UploadPhoto(stream);
                     }
                 }
 
@@ -120,7 +120,7 @@ namespace TrallyRally.Controllers
                     {
                         using (var stream = newImage.OpenReadStream())
                         {
-                            question.Image = uploadPhoto(stream);
+                            question.Image = UploadPhoto(stream);
                         }
                     }
 
@@ -159,7 +159,7 @@ namespace TrallyRally.Controllers
             return _context.Questions.Any(e => e.ID == id);
         }
 
-        private string uploadPhoto(Stream stream)
+        private string UploadPhoto(Stream stream)
         {
             var relativePath = Path.Combine("uploads/questions", ImageUploader.RandomJpegName());
             return ImageUploader.UploadJpeg(stream, _webHostEnvironment.WebRootPath, relativePath);
