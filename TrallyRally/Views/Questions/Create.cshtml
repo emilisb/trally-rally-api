@@ -11,7 +11,7 @@
                 </div>
                 <!-- /.card-header -->
                 <!-- form start -->
-                <form asp-action="Create">
+                <form asp-action="Create" enctype="multipart/form-data">
                     <div class="card-body">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         <div class="form-group">
@@ -20,9 +20,13 @@
                             <span asp-validation-for="Title" class="text-danger"></span>
                         </div>
                         <div class="form-group">
-                            <label asp-for="Image" class="control-label"></label>
-                            <input asp-for="Image" class="form-control" />
-                            <span asp-validation-for="Image" class="text-danger"></span>
+                            <label for="NewImage">Image</label>
+                            <div class="input-group">
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="NewImage" name="NewImage">
+                                    <label class="custom-file-label" for="NewImage">Choose file</label>
+                                </div>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label asp-for="Text" class="control-label"></label>
@@ -78,6 +82,13 @@
 
 @section Scripts {
     <script src="~/js/map-picker.js" asp-append-version="true"></script>
+
+    <!-- bs-custom-file-input -->
+    <script src="~/plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+
+    <script>$(function () {
+            bsCustomFileInput.init();
+        });</script>
 
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     @{await Html.RenderPartialAsync("_GoogleMaps");}

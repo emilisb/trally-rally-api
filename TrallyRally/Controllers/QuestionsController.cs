@@ -1,11 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using TrallyRally.Data;
+using TrallyRally.Helpers;
 using TrallyRally.Models;
 
 namespace TrallyRally.Controllers
@@ -13,10 +17,12 @@ namespace TrallyRally.Controllers
     public class QuestionsController : Controller
     {
         private readonly DatabaseContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public QuestionsController(DatabaseContext context)
+        public QuestionsController(DatabaseContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: Questions
@@ -54,10 +60,18 @@ namespace TrallyRally.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Title,Image,Text,Type,Latitude,Longitude,MaxDistance,Points")] Question question)
+        public async Task<IActionResult> Create([Bind("ID,Title,Text,Type,Latitude,Longitude,MaxDistance,Points")] Question question, IFormFile newImage)
         {
             if (ModelState.IsValid)
             {
+                if (newImage != null)
+                {
+                    using (var stream = newImage.OpenReadStream())
+                    {
+                        question.Image = uploadPhoto(stream);
+                    }
+                }
+
                 _context.Add(question);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -86,7 +100,7 @@ namespace TrallyRally.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Title,Image,Text,Type,Latitude,Longitude,MaxDistance,Points")] Question question)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Title,Image,Text,Type,Latitude,Longitude,MaxDistance,Points")] Question question, IFormFile newImage)
         {
             if (id != question.ID)
             {
@@ -97,6 +111,14 @@ namespace TrallyRally.Controllers
             {
                 try
                 {
+                    if (newImage != null)
+                    {
+                        using (var stream = newImage.OpenReadStream())
+                        {
+                            question.Image = uploadPhoto(stream);
+                        }
+                    }
+
                     _context.Update(question);
                     await _context.SaveChangesAsync();
                 }
@@ -130,6 +152,12 @@ namespace TrallyRally.Controllers
         private bool QuestionExists(int id)
         {
             return _context.Questions.Any(e => e.ID == id);
+        }
+
+        private string uploadPhoto(Stream stream)
+        {
+            var relativePath = Path.Combine("uploads/questions", ImageUploader.RandomJpegName());
+            return ImageUploader.UploadJpeg(stream, _webHostEnvironment.WebRootPath, relativePath);
         }
     }
 }

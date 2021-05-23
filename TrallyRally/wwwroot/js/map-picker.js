@@ -51,6 +51,6 @@ function initMap() {
     });
 
     maxDistanceInput.addEventListener('change', function (e) {
-        distanceCircle.setRadius(parseFlat(e.target.value));
+        distanceCircle.setRadius(parseFloat(e.target.value));
     });
 }
