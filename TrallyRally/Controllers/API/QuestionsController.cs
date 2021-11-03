@@ -122,8 +122,7 @@ namespace TrallyRally.Controllers.API
 
         private string UploadPhoto(string base64Photo)
         {
-            var relativePath = Path.Combine("uploads/answers", ImageUploader.RandomJpegName());
-            return ImageUploader.UploadJpeg(base64Photo, _webHostEnvironment.WebRootPath, relativePath);
+            return "";
         }
 
         private bool? IsAnswerCorrect(Question question, string newAnswer)
