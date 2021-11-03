@@ -19,7 +19,9 @@ namespace TrallyRally.Helpers
         {
             var image = Image.FromStream(stream);
             var fullPath = Path.Combine(webRootPath, publicPath);
+
             image.Save(fullPath, System.Drawing.Imaging.ImageFormat.Jpeg);
+            image.Dispose();
 
             return publicPath;
         }
