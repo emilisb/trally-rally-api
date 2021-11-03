@@ -161,8 +161,7 @@ namespace TrallyRally.Controllers
 
         private string UploadPhoto(Stream stream)
         {
-            var relativePath = Path.Combine("uploads/questions", ImageUploader.RandomJpegName());
-            return ImageUploader.UploadJpeg(stream, _webHostEnvironment.WebRootPath, relativePath);
+            return "";
         }
     }
 }

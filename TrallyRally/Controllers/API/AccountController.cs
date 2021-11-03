@@ -68,8 +68,7 @@ namespace TrallyRally.Controllers.API
 
         private string uploadPhoto(string base64Photo)
         {
-            var relativePath = Path.Combine("uploads/avatars", ImageUploader.RandomJpegName());
-            return ImageUploader.UploadJpeg(base64Photo, _webHostEnvironment.WebRootPath, relativePath);
+            return "";
         }
     }
 }
