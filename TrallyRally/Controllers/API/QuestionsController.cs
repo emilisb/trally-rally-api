@@ -52,7 +52,7 @@ namespace TrallyRally.Controllers.API
             var questionDtos = game.Questions.ToList().ConvertAll(q => q.ConvertToDto());
             foreach (var question in questionDtos)
             {
-                bool locked = Haversine.GetDistance((double)question.Coordinates.Lat, (double)question.Coordinates.Long, latitude, longitude) > question.MaxDistance;
+                bool locked = question.MaxDistance < 0;
                 question.Locked = locked;
 
                 if (locked)
