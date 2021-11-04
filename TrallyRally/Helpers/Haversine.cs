@@ -35,7 +35,7 @@ namespace TrallyRally.Helpers
             return distance;
         }
 
-        protected static double DegsToRad(double degs)
+        protected static double DegToRad(double degs)
         {
             return degs * (Math.PI / 180.0);
         }
