@@ -27,8 +27,8 @@
     <Folder Include="Entities\" />
     <Folder Include="Dtos\" />
     <Folder Include="DataStructures\" />
-    <Folder Include="wwwroot\uploads\" />
-    <Folder Include="wwwroot\uploads\answers\" />
-    <Folder Include="wwwroot\uploads\avatars\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Remove="Views\Shared\_DeleteModal.cshtml" />
   </ItemGroup>
 </Project>

@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
 
 namespace TrallyRally
 {
@@ -84,6 +85,24 @@ namespace TrallyRally
                .AllowAnyOrigin()
                .AllowAnyMethod()
                .AllowAnyHeader());
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                OnPrepareResponse = ctx =>
+                {
+                    const int durationInSeconds = 60 * 60 * 24;
+                    ctx.Context.Response.Headers[HeaderNames.CacheControl] =
+                        "public,max-age=" + durationInSeconds;
+                }
+            });
+
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers.Add(HeaderNames.XFrameOptions, "deny");
+                context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
+
+                await next.Invoke();
+            });
 
             app.UseAuthentication();
             app.UseAuthorization();

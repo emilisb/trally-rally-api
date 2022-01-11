@@ -71,16 +71,18 @@ namespace TrallyRally.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,Name")] Game game)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                game.CreatedDate = DateTime.Now;
-                game.ModifiedDate = DateTime.Now;
-
-                _context.Add(game);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return View(game);
             }
-            return View(game);
+
+            game.CreatedDate = DateTime.Now;
+            game.ModifiedDate = DateTime.Now;
+
+            _context.Add(game);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Games/Edit/5
@@ -96,6 +98,7 @@ namespace TrallyRally.Controllers
             {
                 return NotFound();
             }
+
             return View(game);
         }
 
@@ -111,29 +114,31 @@ namespace TrallyRally.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    game.ModifiedDate = DateTime.Now;
-
-                    _context.Update(game);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!GameExists(game.ID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return View(game);
             }
-            return View(game);
+
+            try
+            {
+                game.ModifiedDate = DateTime.Now;
+
+                _context.Update(game);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!GameExists(game.ID))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
         // POST: Games/Delete/5
@@ -142,8 +147,10 @@ namespace TrallyRally.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var game = await _context.Games.FindAsync(id);
+
             _context.Games.Remove(game);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
