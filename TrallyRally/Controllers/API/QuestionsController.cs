@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,23 +48,10 @@ namespace TrallyRally.Controllers.API
                 return new List<QuestionDto>();
             }
 
-            var index = 0;
             var questionDtos = game.Questions.ToList().ConvertAll(q => q.ConvertToDto());
-            foreach (var question in questionDtos)
-            {
-                bool locked = question.MaxDistance < 0;
-                question.Locked = locked;
+            var questionsWithLockedDetails = HideLockedQuestionDetails(questionDtos);
 
-                if (locked)
-                {
-                    question.Title = $"-Užrakintas Klausimas {index + 1}-";
-                    question.Text = "";
-                }
-
-                index++;
-            }
-
-            return questionDtos;
+            return questionsWithLockedDetails;
         }
 
         [HttpPut("{id}/submit")]
@@ -141,6 +128,27 @@ namespace TrallyRally.Controllers.API
             // Set correct status to null so administrator would have to correct answer again
             // (in case of player guessing the correct answer and then changing the answer to wrong)
             return null;
+        }
+
+        private List<QuestionDto> HideLockedQuestionDetails(IList<QuestionDto> questionDtos)
+        {
+            var index = 0;
+            var updatedQuestions = new List<QuestionDto>(questionDtos);
+            foreach (var question in updatedQuestions)
+            {
+                bool locked = question.MaxDistance < 0;
+                question.Locked = locked;
+
+                if (locked)
+                {
+                    question.Title = $"-Užrakintas Klausimas {index + 1}-";
+                    question.Text = "";
+                }
+
+                index++;
+            }
+
+            return updatedQuestions;
         }
     }
 }
