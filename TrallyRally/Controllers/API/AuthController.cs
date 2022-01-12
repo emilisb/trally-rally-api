@@ -1,12 +1,10 @@
-﻿using System;
+using System;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.ComponentModel.DataAnnotations;
 using TrallyRally.Services;
 using TrallyRally.Entities;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace TrallyRally.Controllers.API
 {
@@ -52,7 +50,18 @@ namespace TrallyRally.Controllers.API
                 return Unauthorized();
             }
 
-            var role = "player"; // TODO: use enum
+            return Ok(LogInUser(user));
+        }
+
+        [HttpGet("user")]
+        public IActionResult GetUser()
+        {
+            return Ok(_userService.GetUserFromClaims(User));
+        }
+
+        protected LoginResponse LogInUser(IUser user)
+        {
+            var role = "player";
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()),
@@ -60,20 +69,14 @@ namespace TrallyRally.Controllers.API
                 new Claim(ClaimTypes.Role, role)
             };
 
-            var jwtResult = _jwtAuthManager.GenerateTokens(request.Username, claims, DateTime.Now);
-            return Ok(new LoginResponse
+            var jwtResult = _jwtAuthManager.GenerateTokens(user.Username, claims, DateTime.Now);
+            return new LoginResponse
             {
                 User = user,
                 Role = role,
                 AccessToken = jwtResult.AccessToken,
                 RefreshToken = jwtResult.RefreshToken.TokenString
-            });
-        }
-
-        [HttpGet("user")]
-        public IActionResult GetUser()
-        {
-            return Ok(_userService.GetUserFromClaims(User));
+            };
         }
     }
 }
